@@ -7,18 +7,28 @@
     </head>
     <body>
         <style>
-            body {
+            canvas {
                 overflow: hidden;
                 padding: 0px;
                 margin: 0px;
             }
         </style>
-        <canvas
-            id="canvas"
-            width="1050"
-            height="450"
-            style="background-color: #000000"
-        ></canvas>
+        <div>
+            <canvas
+                id="canvas"
+                width="1050"
+                height="450"
+                style="background-color: #000000"
+            ></canvas>
+            <div style="align-self: center">
+                <h3>Select Level</h3>
+                <button type="button" id="lvlbtn1">1</button>
+                <button type="button" id="lvlbtn2">2</button>
+                <button type="button" id="lvlbtn3">3</button>
+                <button type="button" id="lvlbtn4">4</button>
+                <button type="button" id="lvlbtn5">5</button>
+            </div>
+        </div>
         <script src="main.js" type="module"></script>
     </body>
 </html>

@@ -3,17 +3,41 @@ import { Painter } from "./painter.js";
 import { Environment } from "./environment.js";
 import { TEST, HISTORY_SIZE } from "./consts.js";
 
-const [x, y, xs, ys, a, surface] = new Environment().createEnvironment(TEST);
-
 let canvas = document.getElementById("canvas");
 let ctx = canvas.getContext("2d");
 ctx.font = "15px Arial";
-
+let level = 1;
+let [x, y, xs, ys, a, surface] = new Environment().createEnvironment(level);
+let myWorker = new Worker("myWorker.js", { type: "module" });
 const painter = new Painter(ctx, canvas);
 let myLander = new Lander(surface, x, y, xs, ys, a, null);
-let myWorker = new Worker("myWorker.js", { type: "module" });
 let currentGeneration = 0;
 let currentFitness = -99999999;
+document.getElementById("lvlbtn1").onclick = () => handleLevelChange(1);
+document.getElementById("lvlbtn2").onclick = () => handleLevelChange(2);
+document.getElementById("lvlbtn3").onclick = () => handleLevelChange(3);
+document.getElementById("lvlbtn4").onclick = () => handleLevelChange(4);
+document.getElementById("lvlbtn5").onclick = () => handleLevelChange(5);
+
+const handleLevelChange = (l) => {
+    myWorker.terminate();
+    [x, y, xs, ys, a, surface] = new Environment().createEnvironment(l);
+    myWorker = new Worker("myWorker.js", { type: "module" });
+    myLander = new Lander(surface, x, y, xs, ys, a, null);
+    myWorker.postMessage(l);
+    myWorker.onmessage = function (e) {
+        const { messageType, data } = e.data;
+        if (messageType == "Points") {
+            currentGeneration = data[1];
+            currentFitness = data[2];
+            drawFinding(data[0]);
+        } else if (messageType == "Final") {
+            myLander.path = data;
+            myLander.simulate();
+            window.requestAnimationFrame(drawLanding);
+        }
+    };
+};
 
 let i = 0;
 const drawLanding = () => {
@@ -37,15 +61,4 @@ const drawFinding = (p) => {
     painter.drawInfo(currentGeneration, currentFitness);
 };
 
-myWorker.onmessage = function (e) {
-    const { messageType, data } = e.data;
-    if (messageType == "Points") {
-        currentGeneration = data[1];
-        currentFitness = data[2];
-        drawFinding(data[0]);
-    } else if (messageType == "Final") {
-        myLander.path = data;
-        myLander.simulate();
-        window.requestAnimationFrame(drawLanding);
-    }
-};
+handleLevelChange(level);
