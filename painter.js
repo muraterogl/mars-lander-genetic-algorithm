@@ -113,4 +113,38 @@ export class Painter {
             this.ctx.lineWidth = 1;
         }
     };
+
+    drawInfo = (generation, fitness, lander) => {
+        this.ctx.fillStyle = "white";
+        if (lander) {
+            this.ctx.fillText(`Generation: ${generation}`, 50, 40);
+            this.ctx.fillText(`Fitness: ${fitness.toFixed(2)}`, 50, 60);
+            this.ctx.fillText(
+                `Altitude: ${Math.round(lander.position.y)} m`,
+                50,
+                80
+            );
+            this.ctx.fillText(
+                `Position: ${Math.round(lander.position.x)} m`,
+                50,
+                100
+            );
+            this.ctx.fillText(
+                `H.Velocity: ${Math.round(lander.velocity.x)} m/s`,
+                900,
+                40
+            );
+            this.ctx.fillText(
+                `V.Velocity: ${Math.round(lander.velocity.y)} m/s`,
+                900,
+                60
+            );
+            this.ctx.fillText(`Angle: ${lander.angle} degree`, 900, 80);
+            this.ctx.fillText(`Power: ${lander.power} m/s^2`, 900, 100);
+            this.ctx.fillText(`Fuel Used: ${lander.fuelUsed} lt`, 900, 120);
+        } else {
+            this.ctx.fillText(`Generation: ${generation}`, 50, 40);
+            this.ctx.fillText(`Fitness: ${fitness.toFixed(2)}`, 50, 60);
+        }
+    };
 }
