@@ -30,13 +30,7 @@ export class Lander {
                 this.applyPath();
                 this.fuelUsed += this.power;
             }
-            if (this.surface.isLanded(this)) {
-                this.landed = true;
-                this.stopLander();
-            } else if (this.surface.isCrashed(this, debug)) {
-                this.crashed = true;
-                this.stopLander();
-            }
+            this.surface.isLanded(this, debug);
             this.acceleration = this.powerToForce().add(
                 new Vector(0, -GRAVITY)
             );
@@ -49,13 +43,7 @@ export class Lander {
     nextSecondState = () => {
         if (!this.crashed && !this.landed) {
             this.applyPath();
-            if (this.surface.isLanded(this)) {
-                this.landed = true;
-                this.stopLander();
-            } else if (this.surface.isCrashed(this)) {
-                this.crashed = true;
-                this.stopLander();
-            }
+            this.surface.isLanded(this);
             this.simulationFuelUsed += this.power;
             this.acceleration = this.powerToForce().add(
                 new Vector(0, -GRAVITY)
