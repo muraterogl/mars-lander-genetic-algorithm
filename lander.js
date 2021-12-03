@@ -6,6 +6,8 @@ export class Lander {
     constructor(surface, initX, initY, initVx, initVy, initA, initPath) {
         this.surface = surface;
         this.position = new Vector(initX, initY);
+        this.prevPosition = null;
+        this.prevAngle = 0;
         this.velocity = new Vector(initVx, initVy);
         this.acceleration = new Vector(0, -GRAVITY / FPS);
         this.angle = initA;
@@ -31,6 +33,8 @@ export class Lander {
                 this.fuelUsed += this.power;
             }
             this.surface.isLanded(this, debug);
+            this.prevPosition = this.position;
+            this.prevAngle = this.angle;
             this.acceleration = this.powerToForce().add(
                 new Vector(0, -GRAVITY)
             );
@@ -44,7 +48,9 @@ export class Lander {
         if (!this.crashed && !this.landed) {
             this.applyPath();
             this.surface.isLanded(this);
-            this.simulationFuelUsed += this.power;
+            this.prevPosition = this.position;
+            this.prevAngle = this.angle;
+            this.fuelUsed += this.power;
             this.acceleration = this.powerToForce().add(
                 new Vector(0, -GRAVITY)
             );
@@ -62,6 +68,7 @@ export class Lander {
 
     applyPath = () => {
         const pathIndex = Math.floor(this.tick / FPS);
+        this.pathIndex = pathIndex;
         if (pathIndex < PATH_LENGTH && this.path.length > 0) {
             this.angle += this.path[pathIndex][0];
             this.power += this.path[pathIndex][1];
@@ -101,6 +108,7 @@ export class Lander {
         let pathIndex = Math.floor(vLander.tick / FPS);
         while (!vLander.crashed && !vLander.landed && pathIndex < PATH_LENGTH) {
             vLander.nextSecondState();
+            //vLander.nextState();
             positions.push(new Point(vLander.position.x, vLander.position.y));
             pathIndex = Math.floor(vLander.tick / FPS);
         }
@@ -110,6 +118,6 @@ export class Lander {
         this.simulationCrashed = vLander.crashed;
         this.simulationLanded = vLander.landed;
         this.simulationLastAngle = vLander.angle;
-        this.simulationFuelUsed = vLander.simulationFuelUsed;
+        this.simulationFuelUsed = vLander.fuelUsed;
     };
 }

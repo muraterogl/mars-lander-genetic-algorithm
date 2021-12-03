@@ -12,7 +12,7 @@ onmessage = function (e) {
 
     let j = 0;
     let k = 0;
-    while (j < 250 && k < 2500) {
+    while (j < 50 && k < 1000) {
         //for (let i = 0; i < 300; i++) {
         genetic.reproduction();
         try {

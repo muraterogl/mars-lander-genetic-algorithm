@@ -91,6 +91,7 @@ export class Genetic {
     crossover = (parent1, parent2) => {
         let rand = 0;
         const childPath = Array(PATH_LENGTH);
+        const child2Path = Array(PATH_LENGTH);
         for (let i = 0; i < PATH_LENGTH; i++) {
             rand = this.randomInterval(0, 100) / 100;
             let angle = Math.round(
@@ -103,9 +104,20 @@ export class Genetic {
                 angle = this.randomInterval(-15, 15);
                 power = this.randomInterval(-1, 1);
             }
+            let angle2 = Math.round(
+                (1 - rand) * parent1.path[i][0] + rand * parent2.path[i][0]
+            );
+            let power2 = Math.round(
+                (1 - rand) * parent1.path[i][1] + rand * parent2.path[i][1]
+            );
+            if (this.randomInterval(0, 100) <= MUTATION_PERC) {
+                angle2 = this.randomInterval(-15, 15);
+                power2 = this.randomInterval(-1, 1);
+            }
             childPath[i] = [angle, power];
+            child2Path[i] = [angle, power];
         }
-        return childPath;
+        return [childPath, child2Path];
     };
 
     reproduction = () => {
@@ -113,9 +125,10 @@ export class Genetic {
             (ind1, ind2) => ind2.fitness - ind1.fitness
         );
         let newPopulation = Array(POPULATION_SIZE);
-        for (let i = 0; i < POPULATION_SIZE; i++) {
+        for (let i = 0; i < POPULATION_SIZE; i += 2) {
             if (i < ELITE_PERC * POPULATION_SIZE) {
                 newPopulation[i] = this.population[i];
+                newPopulation[i + 1] = this.population[i + 1];
             } else {
                 const rand = this.randomInterval(
                     0,
@@ -125,6 +138,10 @@ export class Genetic {
                     0,
                     ELITE_PERC * POPULATION_SIZE - 1
                 );
+                const [path1, path2] = this.crossover(
+                    this.population[rand],
+                    this.population[rand2]
+                );
                 newPopulation[i] = new Lander(
                     this.surface,
                     this.initX,
@@ -132,13 +149,23 @@ export class Genetic {
                     this.initVx,
                     this.initVy,
                     this.initA,
-                    this.crossover(
-                        this.population[rand],
-                        this.population[rand2]
-                    )
+                    path1
+                );
+                newPopulation[i + 1] = new Lander(
+                    this.surface,
+                    this.initX,
+                    this.initY,
+                    this.initVx,
+                    this.initVy,
+                    this.initA,
+                    path2
                 );
                 newPopulation[i].simulate();
                 newPopulation[i].fitness = this.fitness(newPopulation[i]);
+                newPopulation[i + 1].simulate();
+                newPopulation[i + 1].fitness = this.fitness(
+                    newPopulation[i + 1]
+                );
             }
         }
         this.population = newPopulation;

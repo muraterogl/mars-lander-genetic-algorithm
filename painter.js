@@ -25,6 +25,7 @@ export class Painter {
                 canvas
             );
             this.ctx.moveTo(prevX, prevY);
+            //this.ctx.fillRect(prevX, prevY, 3, 3);
             const [x, y] = gameToCanvasCoordinate(
                 points[i].x,
                 points[i].y,
