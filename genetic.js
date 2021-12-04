@@ -112,7 +112,7 @@ export class Genetic {
                 power2 = this.randomInterval(-1, 1);
             }
             childPath[i] = [angle, power];
-            child2Path[i] = [angle, power];
+            child2Path[i] = [angle2, power2];
         }
         return [childPath, child2Path];
     };
