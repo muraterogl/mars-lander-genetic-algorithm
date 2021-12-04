@@ -67,10 +67,7 @@ export class Genetic {
             individual.simulationPoints[individual.simulationPoints.length - 1];
         const [flatx, flatX] = individual.surface.landingSurface;
         let score = 0;
-        if (
-            individual.simulationCrashed == false &&
-            individual.simulationLanded == false
-        ) {
+        if (!individual.simulationCrashed && !individual.simulationLanded) {
             return -1e9;
         } else if (individual.simulationCrashed) {
             if (lastPosition.x < flatx) {
